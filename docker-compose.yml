@@ -58,7 +58,6 @@ services:
       - ./public:/usr/share/nginx/html/public:ro
     depends_on:
       - tenant-manager
-      - twenty-crm
     networks:
       - ent-network
     restart: unless-stopped
@@ -167,68 +166,29 @@ services:
           cpus: '1'
           memory: 512M
 
-  # Twenty CRM Service
-  twenty-crm:
-    build:
-      context: /root/twenty
-      dockerfile: packages/twenty-docker/twenty/Dockerfile
-    container_name: ent-twenty-crm
-    env_file: .env
-    environment:
-      # Application Configuration
-      - NODE_ENV=production
-      - PORT=3000
-      
-      # Database Configuration
-      - PG_DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@tenant-db:5432/twenty_tenant_template
-      
-      # Redis Configuration
-      - REDIS_URL=redis://redis:6379
-      
-      # Authentication
-      - JWT_SECRET=${JWT_SECRET}
-      - APP_SECRET=${APP_SECRET:-${JWT_SECRET}}
-      
-      # Migration Control (set to true to skip migrations)
-      - DISABLE_DB_MIGRATIONS=${DISABLE_DB_MIGRATIONS:-false}
-      - DISABLE_CRON_JOBS_REGISTRATION=${DISABLE_CRON_JOBS_REGISTRATION:-false}
-      
-      # Migration Environment Variables (if needed)
-      - TWENTY_ADMIN_TOKEN=${TWENTY_ADMIN_TOKEN:-}
-      - BOOTSTRAP_SECRET=${BOOTSTRAP_SECRET:-}
-      - TWENTY_BASE_URL=${TWENTY_BASE_URL:-http://localhost:3000/metadata}
-      - TWENTY_API_KEY=${TWENTY_API_KEY:-}
-      
-      # Node.js Optimization
-      - NODE_OPTIONS=--max-old-space-size=2048
-    depends_on:
-      tenant-db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - ent-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/metadata"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 90s
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 4G
-        reservations:
-          cpus: '1'
-          memory: 2G
-    # Logging configuration for better debugging
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+  # Twenty CRM Service (Commented out - requires separate twenty repository)
+  # Uncomment and configure when twenty repository is available at /root/twenty
+  # twenty-crm:
+  #   build:
+  #     context: /root/twenty
+  #     dockerfile: packages/twenty-docker/twenty/Dockerfile
+  #   container_name: ent-twenty-crm
+  #   env_file: .env
+  #   environment:
+  #     - NODE_ENV=production
+  #     - PORT=3000
+  #     - PG_DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@tenant-db:5432/twenty_tenant_template
+  #     - REDIS_URL=redis://redis:6379
+  #     - JWT_SECRET=${JWT_SECRET}
+  #     - APP_SECRET=${APP_SECRET:-${JWT_SECRET}}
+  #   depends_on:
+  #     tenant-db:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #   networks:
+  #     - ent-network
+  #   restart: unless-stopped
 
   # Salla Orchestrator (Python FastAPI)
   salla-orchestrator:

@@ -65,6 +65,11 @@ SALLA_WEBHOOK_SECRET=$(openssl rand -base64 32)
 SALLA_CLIENT_ID=your_salla_client_id
 SALLA_CLIENT_SECRET=your_salla_client_secret
 
+# Clerk Integration (Update with your credentials)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+CLERK_WEBHOOK_SECRET=$(openssl rand -base64 32)
+
 # Grafana
 GRAFANA_ADMIN_PASSWORD=admin
 
@@ -78,12 +83,14 @@ ENVEOF
     JWT_SEC=$(openssl rand -base64 32)
     ADMIN_KEY=$(openssl rand -base64 32)
     WEBHOOK_SEC=$(openssl rand -base64 32)
+    CLERK_WEBHOOK_SEC=$(openssl rand -base64 32)
     
     # Replace placeholders with actual values
     sed -i "s#\$(openssl rand -base64 32 | tr -d \"=+/\" | cut -c1-25)#${POSTGRES_PASS}#g" .env
     sed -i "s#\$(openssl rand -base64 32)#${JWT_SEC}#g" .env
     sed -i "s#\$(openssl rand -base64 32)#${ADMIN_KEY}#g" .env
     sed -i "s#\$(openssl rand -base64 32)#${WEBHOOK_SEC}#g" .env
+    sed -i "s#\$(openssl rand -base64 32)#${CLERK_WEBHOOK_SEC}#g" .env
     
     echo -e "${GREEN}✓ .env file created with generated secrets${NC}"
     echo -e "${YELLOW}⚠️  IMPORTANT: Update SALLA_CLIENT_ID and SALLA_CLIENT_SECRET in .env${NC}"
