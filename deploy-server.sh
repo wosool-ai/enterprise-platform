@@ -97,6 +97,23 @@ ENVEOF
     echo -e "${YELLOW}⚠️  IMPORTANT: Update SALLA_CLIENT_ID and SALLA_CLIENT_SECRET in .env${NC}"
 else
     echo -e "${GREEN}✓ .env file already exists${NC}"
+    
+    # Add Clerk variables if missing
+    if ! grep -q "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" .env; then
+        echo ""
+        echo -e "${YELLOW}Adding Clerk variables to existing .env file...${NC}"
+        cat >> .env << 'CLERKEOF'
+
+# Clerk Integration
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_ZW1lcmdpbmctc2tpbmstNzUuY2xlcmsuYWNjb3VudHMuZGV2JA
+CLERK_SECRET_KEY=sk_test_kIRXGCc7WeA4MMaAkh6L3d17NbGRB6QkRodqsYHqrm
+CLERK_WEBHOOK_SECRET=whsec_e43dYrJxMJVz/8YBe3Lcq078Cx7CYpTm
+CLERK_WEBHOOK_URL=https://api.wosool.ai/api/webhooks/clerk
+CLERKEOF
+        echo -e "${GREEN}✓ Clerk variables added${NC}"
+    else
+        echo -e "${GREEN}✓ Clerk variables already present${NC}"
+    fi
 fi
 
 # Fix docker-compose.yml syntax error (line 11 has duplicate "environment:")
