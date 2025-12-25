@@ -80,10 +80,10 @@ ENVEOF
     WEBHOOK_SEC=$(openssl rand -base64 32)
     
     # Replace placeholders with actual values
-    sed -i "s|\$(openssl rand -base64 32 | tr -d \"=+/\" | cut -c1-25)|${POSTGRES_PASS}|g" .env
-    sed -i "s|\$(openssl rand -base64 32)|${JWT_SEC}|g" .env
-    sed -i "s|\$(openssl rand -base64 32)|${ADMIN_KEY}|g" .env
-    sed -i "s|\$(openssl rand -base64 32)|${WEBHOOK_SEC}|g" .env
+    sed -i "s#\$(openssl rand -base64 32 | tr -d \"=+/\" | cut -c1-25)#${POSTGRES_PASS}#g" .env
+    sed -i "s#\$(openssl rand -base64 32)#${JWT_SEC}#g" .env
+    sed -i "s#\$(openssl rand -base64 32)#${ADMIN_KEY}#g" .env
+    sed -i "s#\$(openssl rand -base64 32)#${WEBHOOK_SEC}#g" .env
     
     echo -e "${GREEN}✓ .env file created with generated secrets${NC}"
     echo -e "${YELLOW}⚠️  IMPORTANT: Update SALLA_CLIENT_ID and SALLA_CLIENT_SECRET in .env${NC}"
