@@ -269,11 +269,11 @@ echo -e "${GREEN}Building and starting services...${NC}"
 echo "This may take several minutes..."
 echo ""
 
-# Setup swap space to prevent OOM kills during builds
+# Setup swap space to prevent OOM kills during builds (safety measure)
 echo -e "${YELLOW}Setting up swap space for builds...${NC}"
 if [ ! -f /swapfile ]; then
-    echo "Creating 2GB swap file..."
-    fallocate -l 2G /swapfile || dd if=/dev/zero of=/swapfile bs=1024 count=2097152
+    echo "Creating 2GB swap file as safety buffer..."
+    fallocate -l 2G /swapfile 2>/dev/null || dd if=/dev/zero of=/swapfile bs=1024 count=2097152
     chmod 600 /swapfile
     mkswap /swapfile
     swapon /swapfile
@@ -283,6 +283,12 @@ else
     echo "✅ Swap file already exists"
     swapon /swapfile 2>/dev/null || true
 fi
+
+# Show memory status
+echo ""
+echo "Memory status:"
+free -h
+echo ""
 
 # Configure Docker BuildKit with memory limits
 export DOCKER_BUILDKIT=1
@@ -304,24 +310,25 @@ DOCKER_BUILDKIT=1 $COMPOSE_CMD build --progress=plain --no-cache tenant-manager 
 echo "Building salla-orchestrator..."
 DOCKER_BUILDKIT=1 $COMPOSE_CMD build --progress=plain --no-cache salla-orchestrator || echo "Warning: salla-orchestrator build failed, will retry later"
 
-# Build twenty-crm if the directory exists (with reduced parallelism)
+# Build twenty-crm if the directory exists
 if [ -d "/root/twenty" ]; then
-    echo "Building twenty-crm (this may take 10-15 minutes on a 2GB server)..."
-    echo "⚠️  If this fails, consider building on a larger server or using pre-built images"
-    # Use BuildKit with memory limits and reduced parallelism
+    echo "Building twenty-crm (this may take 10-15 minutes)..."
+    # Use BuildKit with optimized settings for 4GB server
     DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 $COMPOSE_CMD build \
         --progress=plain \
         --no-cache \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
         twenty-crm || {
-        echo -e "${RED}⚠️  twenty-crm build failed. This is common on 2GB servers.${NC}"
-        echo "Options:"
-        echo "  1. Upgrade to a 4GB+ server"
-        echo "  2. Build twenty-crm separately on a larger machine"
-        echo "  3. Use pre-built Docker images"
+        echo -e "${RED}⚠️  twenty-crm build failed.${NC}"
+        echo "Troubleshooting:"
+        echo "  1. Check available memory: free -h"
+        echo "  2. Check Docker logs: docker system df"
+        echo "  3. Clean Docker: docker system prune -af"
+        echo "  4. Try building again"
     }
 else
     echo -e "${YELLOW}⚠️  /root/twenty directory not found, skipping twenty-crm build${NC}"
+    echo "   To build twenty-crm, ensure /root/twenty exists with the Twenty CRM repository"
 fi
 
 # Start all services (pre-built images will be used)
