@@ -167,11 +167,9 @@ services:
           cpus: '1'
           memory: 512M
 
-  # Twenty CRM Service
+  # Twenty CRM Service (using pre-built image to avoid memory issues)
   twenty-crm:
-    build:
-      context: /root/twenty
-      dockerfile: packages/twenty-docker/twenty/Dockerfile
+    image: twentycrm/twenty:latest
     container_name: ent-twenty-crm
     env_file: .env
     environment:
