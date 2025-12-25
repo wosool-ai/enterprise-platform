@@ -65,10 +65,11 @@ SALLA_WEBHOOK_SECRET=$(openssl rand -base64 32)
 SALLA_CLIENT_ID=your_salla_client_id
 SALLA_CLIENT_SECRET=your_salla_client_secret
 
-# Clerk Integration (Update with your credentials)
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-CLERK_SECRET_KEY=your_clerk_secret_key
-CLERK_WEBHOOK_SECRET=$(openssl rand -base64 32)
+# Clerk Integration
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_ZW1lcmdpbmctc2tpbmstNzUuY2xlcmsuYWNjb3VudHMuZGV2JA
+CLERK_SECRET_KEY=sk_test_kIRXGCc7WeA4MMaAkh6L3d17NbGRB6QkRodqsYHqrm
+CLERK_WEBHOOK_SECRET=whsec_e43dYrJxMJVz/8YBe3Lcq078Cx7CYpTm
+CLERK_WEBHOOK_URL=https://api.wosool.ai/api/webhooks/clerk
 
 # Grafana
 GRAFANA_ADMIN_PASSWORD=admin
@@ -83,14 +84,14 @@ ENVEOF
     JWT_SEC=$(openssl rand -base64 32)
     ADMIN_KEY=$(openssl rand -base64 32)
     WEBHOOK_SEC=$(openssl rand -base64 32)
-    CLERK_WEBHOOK_SEC=$(openssl rand -base64 32)
+    # Note: CLERK_WEBHOOK_SECRET is already set to the provided value, no need to replace
     
     # Replace placeholders with actual values
     sed -i "s#\$(openssl rand -base64 32 | tr -d \"=+/\" | cut -c1-25)#${POSTGRES_PASS}#g" .env
     sed -i "s#\$(openssl rand -base64 32)#${JWT_SEC}#g" .env
     sed -i "s#\$(openssl rand -base64 32)#${ADMIN_KEY}#g" .env
     sed -i "s#\$(openssl rand -base64 32)#${WEBHOOK_SEC}#g" .env
-    sed -i "s#\$(openssl rand -base64 32)#${CLERK_WEBHOOK_SEC}#g" .env
+    # CLERK_WEBHOOK_SECRET is already set correctly, no replacement needed
     
     echo -e "${GREEN}✓ .env file created with generated secrets${NC}"
     echo -e "${YELLOW}⚠️  IMPORTANT: Update SALLA_CLIENT_ID and SALLA_CLIENT_SECRET in .env${NC}"
@@ -268,14 +269,32 @@ echo -e "${GREEN}Building and starting services...${NC}"
 echo "This may take several minutes..."
 echo ""
 
-# Use docker compose (plugin) if available, otherwise docker-compose
+# Build services sequentially to avoid memory issues on small droplets
+echo -e "${YELLOW}Building services sequentially to prevent memory issues...${NC}"
 if docker compose version &> /dev/null; then
-    docker compose build --no-cache
-    docker compose up -d
+    COMPOSE_CMD="docker compose"
 else
-    docker-compose build --no-cache
-    docker-compose up -d
+    COMPOSE_CMD="docker-compose"
 fi
+
+# Build services one at a time
+echo "Building tenant-manager..."
+$COMPOSE_CMD build --no-cache tenant-manager || echo "Warning: tenant-manager build failed, will retry later"
+
+echo "Building salla-orchestrator..."
+$COMPOSE_CMD build --no-cache salla-orchestrator || echo "Warning: salla-orchestrator build failed, will retry later"
+
+# Build twenty-crm if the directory exists
+if [ -d "/root/twenty" ]; then
+    echo "Building twenty-crm..."
+    $COMPOSE_CMD build --no-cache twenty-crm || echo "Warning: twenty-crm build failed"
+else
+    echo -e "${YELLOW}⚠️  /root/twenty directory not found, skipping twenty-crm build${NC}"
+fi
+
+# Start all services (pre-built images will be used)
+echo "Starting all services..."
+$COMPOSE_CMD up -d
 
 # Wait for services to be ready
 echo ""
