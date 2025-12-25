@@ -176,6 +176,8 @@ services:
       # Application Configuration
       - NODE_ENV=production
       - PORT=3000
+      - NEXT_PUBLIC_SERVER_URL=http://167.99.20.94
+      - SERVER_URL=http://167.99.20.94
       
       # Database Configuration
       - PG_DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@tenant-db:5432/twenty_tenant_template
