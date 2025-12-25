@@ -53,7 +53,7 @@ ssh -i $SSH_KEY_FILE -o StrictHostKeyChecking=no root@167.99.20.94 << 'ENDSSH'
     
     echo "5️⃣ Testing Webhook Endpoint..."
     echo ""
-    WEBHOOK_TEST=$(curl -s -X POST http://localhost/api/webhooks/clerk \
+    WEBHOOK_TEST=$(curl -s -X POST http://localhost/api/clerk/webhooks \
         -H "Content-Type: application/json" \
         -d '{"type":"test"}' 2>&1)
     if echo "$WEBHOOK_TEST" | grep -q "error\|Error\|404"; then

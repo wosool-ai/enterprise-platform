@@ -60,7 +60,7 @@ ssh -i $SSH_KEY_FILE -o StrictHostKeyChecking=no root@167.99.20.94 << ENDSSH
         sed -i "s|NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=.*|NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$CLERK_PUBLISHABLE_KEY|" .env
         sed -i "s|CLERK_SECRET_KEY=.*|CLERK_SECRET_KEY=$CLERK_SECRET_KEY|" .env
         sed -i "s|CLERK_WEBHOOK_SECRET=.*|CLERK_WEBHOOK_SECRET=$CLERK_WEBHOOK_SECRET|" .env
-        sed -i "s|CLERK_WEBHOOK_URL=.*|CLERK_WEBHOOK_URL=http://167.99.20.94/api/webhooks/clerk|" .env
+        sed -i "s|CLERK_WEBHOOK_URL=.*|CLERK_WEBHOOK_URL=http://167.99.20.94/api/clerk/webhooks|" .env
     else
         # Add new
         echo "" >> .env
@@ -68,7 +68,7 @@ ssh -i $SSH_KEY_FILE -o StrictHostKeyChecking=no root@167.99.20.94 << ENDSSH
         echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$CLERK_PUBLISHABLE_KEY" >> .env
         echo "CLERK_SECRET_KEY=$CLERK_SECRET_KEY" >> .env
         echo "CLERK_WEBHOOK_SECRET=$CLERK_WEBHOOK_SECRET" >> .env
-        echo "CLERK_WEBHOOK_URL=http://167.99.20.94/api/webhooks/clerk" >> .env
+        echo "CLERK_WEBHOOK_URL=http://167.99.20.94/api/clerk/webhooks" >> .env
     fi
     
     echo "✅ Updated .env file"
@@ -87,7 +87,7 @@ ssh -i $SSH_KEY_FILE -o StrictHostKeyChecking=no root@167.99.20.94 << ENDSSH
     echo "📋 Next steps:"
     echo "  1. Go to https://dashboard.clerk.com"
     echo "  2. Navigate to Webhooks"
-    echo "  3. Add endpoint: http://167.99.20.94/api/webhooks/clerk"
+    echo "  3. Add endpoint: http://167.99.20.94/api/clerk/webhooks"
     echo "  4. Select events: organization.created, user.created, user.updated"
     echo "  5. Copy the signing secret and update CLERK_WEBHOOK_SECRET if different"
     echo "  6. Test by accessing: http://167.99.20.94"

@@ -54,7 +54,7 @@ Add or update these variables:
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YOUR_PUBLISHABLE_KEY
 CLERK_SECRET_KEY=sk_test_YOUR_SECRET_KEY
 CLERK_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET
-CLERK_WEBHOOK_URL=http://167.99.20.94/api/webhooks/clerk
+CLERK_WEBHOOK_URL=http://167.99.20.94/api/clerk/webhooks
 ```
 
 **Note**: For `CLERK_WEBHOOK_SECRET`, you'll get this when setting up webhooks (Step 3).
@@ -75,7 +75,7 @@ Webhooks allow Clerk to automatically create tenants when organizations are crea
 
 1. In Clerk Dashboard, go to **Webhooks**
 2. Click **Add Endpoint**
-3. Enter endpoint URL: `http://167.99.20.94/api/webhooks/clerk`
+3. Enter endpoint URL: `http://167.99.20.94/api/clerk/webhooks`
    - **Note**: For production, use HTTPS with a domain
 4. Select events to listen to:
    - ✅ `organization.created`
