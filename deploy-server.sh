@@ -269,6 +269,26 @@ echo -e "${GREEN}Building and starting services...${NC}"
 echo "This may take several minutes..."
 echo ""
 
+# Setup swap space to prevent OOM kills during builds
+echo -e "${YELLOW}Setting up swap space for builds...${NC}"
+if [ ! -f /swapfile ]; then
+    echo "Creating 2GB swap file..."
+    fallocate -l 2G /swapfile || dd if=/dev/zero of=/swapfile bs=1024 count=2097152
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+    echo "/swapfile none swap sw 0 0" >> /etc/fstab
+    echo "✅ Swap space created"
+else
+    echo "✅ Swap file already exists"
+    swapon /swapfile 2>/dev/null || true
+fi
+
+# Configure Docker BuildKit with memory limits
+export DOCKER_BUILDKIT=1
+export BUILDKIT_STEP_LOG_MAX_SIZE=50000000
+export BUILDKIT_STEP_LOG_MAX_SPEED=10000000
+
 # Build services sequentially to avoid memory issues on small droplets
 echo -e "${YELLOW}Building services sequentially to prevent memory issues...${NC}"
 if docker compose version &> /dev/null; then
@@ -277,17 +297,29 @@ else
     COMPOSE_CMD="docker-compose"
 fi
 
-# Build services one at a time
+# Build services one at a time with memory limits
 echo "Building tenant-manager..."
-$COMPOSE_CMD build --no-cache tenant-manager || echo "Warning: tenant-manager build failed, will retry later"
+DOCKER_BUILDKIT=1 $COMPOSE_CMD build --progress=plain --no-cache tenant-manager || echo "Warning: tenant-manager build failed, will retry later"
 
 echo "Building salla-orchestrator..."
-$COMPOSE_CMD build --no-cache salla-orchestrator || echo "Warning: salla-orchestrator build failed, will retry later"
+DOCKER_BUILDKIT=1 $COMPOSE_CMD build --progress=plain --no-cache salla-orchestrator || echo "Warning: salla-orchestrator build failed, will retry later"
 
-# Build twenty-crm if the directory exists
+# Build twenty-crm if the directory exists (with reduced parallelism)
 if [ -d "/root/twenty" ]; then
-    echo "Building twenty-crm..."
-    $COMPOSE_CMD build --no-cache twenty-crm || echo "Warning: twenty-crm build failed"
+    echo "Building twenty-crm (this may take 10-15 minutes on a 2GB server)..."
+    echo "⚠️  If this fails, consider building on a larger server or using pre-built images"
+    # Use BuildKit with memory limits and reduced parallelism
+    DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 $COMPOSE_CMD build \
+        --progress=plain \
+        --no-cache \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
+        twenty-crm || {
+        echo -e "${RED}⚠️  twenty-crm build failed. This is common on 2GB servers.${NC}"
+        echo "Options:"
+        echo "  1. Upgrade to a 4GB+ server"
+        echo "  2. Build twenty-crm separately on a larger machine"
+        echo "  3. Use pre-built Docker images"
+    }
 else
     echo -e "${YELLOW}⚠️  /root/twenty directory not found, skipping twenty-crm build${NC}"
 fi
