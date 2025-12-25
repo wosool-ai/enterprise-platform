@@ -60,3 +60,9 @@ coverage/
 # Monitoring data
 monitoring/data/
 
+# Temporary build directories
+twenty-crm-source/
+builds/
+*.tar
+*.tar.gz
+
