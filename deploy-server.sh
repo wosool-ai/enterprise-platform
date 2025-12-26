@@ -64,6 +64,7 @@ SALLA_WEBHOOK_SECRET=$(openssl rand -base64 32)
 # Salla Integration (Update with your credentials)
 SALLA_CLIENT_ID=your_salla_client_id
 SALLA_CLIENT_SECRET=your_salla_client_secret
+SALLA_REDIRECT_URI=https://api.wosool.ai/salla/callback
 
 # Clerk Integration
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_aG9uZXN0LWJsdWViaXJkLTI3LmNsZXJrLmFjY291bnRzLmRldiQ
