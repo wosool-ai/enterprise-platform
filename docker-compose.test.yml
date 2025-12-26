@@ -45,10 +45,11 @@ services:
       # App Secret (required for session storage)
       APP_SECRET: test-secret-key-change-in-production-min-32-chars
       
-      # Server URL
+      # Server URL (for local testing)
       SERVER_URL: http://localhost:3000
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       NEXT_PUBLIC_SERVER_URL: http://localhost:3000
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:-pk_test_ZW1lcmdpbmctc2tpbmstNzUuY2xlcmsuYWNjb3VudHMuZGV2JA}
       
       # Clerk (use your test keys)
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ZW1lcmdpbmctc2tpbmstNzUuY2xlcmsuYWNjb3VudHMuZGV2JA
