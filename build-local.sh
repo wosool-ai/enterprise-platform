@@ -11,6 +11,7 @@ echo ""
 DOCKER_BUILDKIT=1 docker build \
   -f packages/twenty-docker/twenty/Dockerfile \
   --build-arg REACT_APP_SERVER_BASE_URL=http://localhost:3000 \
+  --build-arg NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_aG9uZXN0LWJsdWViaXJkLTI3LmNsZXJrLmFjY291bnRzLmRldiQ \
   --build-arg APP_VERSION=v1.0.1-localhost \
   -t wosool-ai/twenty-crm:test \
   .

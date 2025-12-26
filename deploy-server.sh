@@ -66,7 +66,7 @@ SALLA_CLIENT_ID=your_salla_client_id
 SALLA_CLIENT_SECRET=your_salla_client_secret
 
 # Clerk Integration
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_ZW1lcmdpbmctc2tpbmstNzUuY2xlcmsuYWNjb3VudHMuZGV2JA
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_aG9uZXN0LWJsdWViaXJkLTI3LmNsZXJrLmFjY291bnRzLmRldiQ
 CLERK_SECRET_KEY=sk_test_kIRXGCc7WeA4MMaAkh6L3d17NbGRB6QkRodqsYHqrm
 CLERK_WEBHOOK_SECRET=whsec_e43dYrJxMJVz/8YBe3Lcq078Cx7CYpTm
 CLERK_WEBHOOK_URL=https://api.wosool.ai/api/webhooks/clerk
@@ -105,7 +105,7 @@ else
         cat >> .env << 'CLERKEOF'
 
 # Clerk Integration
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_ZW1lcmdpbmctc2tpbmstNzUuY2xlcmsuYWNjb3VudHMuZGV2JA
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_aG9uZXN0LWJsdWViaXJkLTI3LmNsZXJrLmFjY291bnRzLmRldiQ
 CLERK_SECRET_KEY=sk_test_kIRXGCc7WeA4MMaAkh6L3d17NbGRB6QkRodqsYHqrm
 CLERK_WEBHOOK_SECRET=whsec_e43dYrJxMJVz/8YBe3Lcq078Cx7CYpTm
 CLERK_WEBHOOK_URL=https://api.wosool.ai/api/webhooks/clerk
