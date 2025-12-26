@@ -167,9 +167,9 @@ services:
           cpus: '1'
           memory: 512M
 
-  # Twenty CRM Service (using pre-built image to avoid memory issues)
+  # Twenty CRM Service (using custom production image)
   twenty-crm:
-    image: twentycrm/twenty:latest
+    image: wosool-ai/twenty-crm:production
     container_name: ent-twenty-crm
     env_file: .env
     environment:
@@ -198,6 +198,11 @@ services:
       # Migration Control
       - DISABLE_DB_MIGRATIONS=${DISABLE_DB_MIGRATIONS:-false}
       - DISABLE_CRON_JOBS_REGISTRATION=${DISABLE_CRON_JOBS_REGISTRATION:-false}
+      - DISABLE_CUSTOM_SCHEMA_MIGRATION=${DISABLE_CUSTOM_SCHEMA_MIGRATION:-false}
+      
+      # Admin Token for Migration (if needed)
+      - TWENTY_ADMIN_TOKEN=${TWENTY_ADMIN_TOKEN:-}
+      - TWENTY_BASE_URL=${SERVER_URL:-http://167.99.20.94}
       
       # Node.js Optimization
       - NODE_OPTIONS=--max-old-space-size=1536
@@ -235,12 +240,22 @@ services:
       context: ./services/salla-orchestrator
       dockerfile: Dockerfile
     container_name: ent-salla-orchestrator
+    env_file: .env
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@global-db:5432/twenty_global
+      - POSTGRES_URL=postgresql://postgres:${POSTGRES_PASSWORD}@global-db:5432/twenty_global
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=twenty_global
+      - REDIS_URL=redis://redis:6379
       - TENANT_MANAGER_URL=http://tenant-manager:3001
       - SALLA_CLIENT_ID=${SALLA_CLIENT_ID}
       - SALLA_CLIENT_SECRET=${SALLA_CLIENT_SECRET}
       - SALLA_REDIRECT_URI=${SALLA_REDIRECT_URI:-https://api.wosool.ai/salla/callback}
+      - WEBHOOK_BASE_URL=${APP_URL:-https://api.wosool.ai}
+      - SALLA_WEBHOOK_SECRET=${SALLA_WEBHOOK_SECRET}
+      - TWENTY_API_URL=${CRM_BASE_URL:-http://167.99.20.94}
+      - TWENTY_API_KEY=${TWENTY_ADMIN_TOKEN:-}
     depends_on:
       global-db:
         condition: service_healthy
