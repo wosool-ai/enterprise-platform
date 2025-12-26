@@ -51,9 +51,9 @@ services:
       NEXT_PUBLIC_SERVER_URL: http://localhost:3000
       
       # Clerk (use your test keys)
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_aG9uZXN0LWJsdWViaXJkLTI3LmNsZXJrLmFjY291bnRzLmRldiQ
-      VITE_CLERK_PUBLISHABLE_KEY: pk_test_aG9uZXN0LWJsdWViaXJkLTI3LmNsZXJrLmFjY291bnRzLmRldiQ
-      CLERK_SECRET_KEY: sk_test_kIRXGCc7WeA4MMaAkh6L3d17NbGRB6QkRodqsYHqrm
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Zmx5aW5nLWFyYWNobmlkLTE3LmNsZXJrLmFjY291bnRzLmRldiQ
+      VITE_CLERK_PUBLISHABLE_KEY: pk_test_Zmx5aW5nLWFyYWNobmlkLTE3LmNsZXJrLmFjY291bnRzLmRldiQ
+      CLERK_SECRET_KEY: sk_test_dV6XYGT3TJfoP8qyfRgvPXRj0GU62lt0yjK5ke6SKc
       CLERK_WEBHOOK_SECRET: whsec_e43dYrJxMJVz/8YBe3Lcq078Cx7CYpTm
       CLERK_WEBHOOK_URL: http://localhost:3000/api/clerk/webhooks
       
